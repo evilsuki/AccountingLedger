@@ -3,8 +3,20 @@ package org.yearup;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class Transaction
+public class Transaction implements Comparable<Transaction>
 {
+    @Override
+    public int compareTo(Transaction transaction)
+    {
+        if (this.date.isEqual(transaction.date))
+        {
+            return this.time.compareTo(transaction.time);
+        }
+
+        return this.date.compareTo(transaction.date);
+    }
+
+
     private LocalDate date;
     private LocalTime time;
     private String description;
