@@ -38,39 +38,44 @@ public class Transaction implements Comparable<Transaction>
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public LocalDate setDate(LocalDate date) {
         this.date = date;
+        return date;
     }
 
     public LocalTime getTime() {
         return time;
     }
 
-    public void setTime(LocalTime time) {
+    public LocalTime setTime(LocalTime time) {
         this.time = time;
+        return time;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public String setDescription(String description) {
         this.description = description;
+        return description;
     }
 
     public String getVendor() {
         return vendor;
     }
 
-    public void setVendor(String vendor) {
+    public String setVendor(String vendor) {
         this.vendor = vendor;
+        return vendor;
     }
 
     public float getAmount() {
         return amount;
     }
 
-    public void setAmount(float amount) {
+    public float setAmount(float amount) {
         this.amount = amount;
+        return amount;
     }
 }

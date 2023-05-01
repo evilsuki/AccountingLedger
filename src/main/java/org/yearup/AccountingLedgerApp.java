@@ -2,6 +2,7 @@ package org.yearup;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -522,14 +523,81 @@ public class AccountingLedgerApp
         float amount = scanner.nextFloat();
         scanner.nextLine();
 
+        FileWriter fileWriter = null;
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
 
+        try
+        {
+            fileWriter = new FileWriter("transactions.csv", true);
+            Transaction transaction = new Transaction(date, time, description, vendor, amount);
+
+            fileWriter.write(transaction.setDate(date) + "|" + transaction.setTime(time) + "|" + transaction.setDescription(description) + "|" + transaction.setVendor(vendor) + "|-" + transaction.setAmount(amount) + "\n");
+            fileWriter.flush();
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+        finally
+        {
+            if (fileWriter != null)
+            {
+                try
+                {
+                    fileWriter.close();
+                }
+                catch (Exception e)
+                {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
     }
 
 
     // ask user for deposit amount and save it to csv file
     private void addDeposit()
     {
+        System.out.println();
+        System.out.print("Enter description: ");
+        String description = scanner.nextLine().toLowerCase().strip();
+        System.out.print("Enter vendor name: ");
+        String vendor = scanner.nextLine().toUpperCase().strip();
+        System.out.print("Enter amount of deposit: ");
+        float amount = scanner.nextFloat();
+        scanner.nextLine();
 
+        FileWriter fileWriter = null;
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
+
+        try
+        {
+            fileWriter = new FileWriter("transactions.csv", true);
+            Transaction transaction = new Transaction(date, time, description, vendor, amount);
+
+            fileWriter.write(transaction.setDate(date) + "|" + transaction.setTime(time) + "|" + transaction.setDescription(description) + "|" + transaction.setVendor(vendor) + "|" + transaction.setAmount(amount) + "\n");
+            fileWriter.flush();
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+        finally
+        {
+            if (fileWriter != null)
+            {
+                try
+                {
+                    fileWriter.close();
+                }
+                catch (Exception e)
+                {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
     }
 
 
