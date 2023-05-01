@@ -248,7 +248,14 @@ public class AccountingLedgerApp
         System.out.println("Date              Time                Description                 Vendor             Amount");
         System.out.println(" ");
 
-        for ()
+        for (Transaction transaction : transactions)
+        {
+            float deposit = transaction.getAmount();
+            if (deposit > 0)
+            {
+                displayTransaction(transaction);
+            }
+        }
 
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println();
@@ -264,7 +271,14 @@ public class AccountingLedgerApp
         System.out.println("Date              Time                Description                 Vendor             Amount");
         System.out.println(" ");
 
-
+        for (Transaction transaction : transactions)
+        {
+            float payment = transaction.getAmount();
+            if (payment < 0)
+            {
+                displayTransaction(transaction);
+            }
+        }
 
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println();
@@ -332,7 +346,7 @@ public class AccountingLedgerApp
     private void reportMTD()
     {
         System.out.println();
-        System.out.println("Payments");
+        System.out.println("Reports Month To Date");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time                Description                 Vendor             Amount");
         System.out.println(" ");
@@ -369,7 +383,7 @@ public class AccountingLedgerApp
     private void reportPreviousMonth()
     {
         System.out.println();
-        System.out.println("Payments");
+        System.out.println("Reports Previous Month");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time                Description                 Vendor             Amount");
         System.out.println(" ");
@@ -407,7 +421,7 @@ public class AccountingLedgerApp
     private void reportYTD()
     {
         System.out.println();
-        System.out.println("Payments");
+        System.out.println("Reports Year To Date");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time                Description                 Vendor             Amount");
         System.out.println(" ");
@@ -439,7 +453,7 @@ public class AccountingLedgerApp
     private void reportPreviousYear()
     {
         System.out.println();
-        System.out.println("Payments");
+        System.out.println("Reports Previous Year");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time                Description                 Vendor             Amount");
         System.out.println(" ");
@@ -472,14 +486,23 @@ public class AccountingLedgerApp
     private void reportSearchVendor()
     {
         System.out.println();
-        System.out.println("Payments");
+        System.out.print("Enter the vendor name: ");
+        String name = scanner.nextLine().toUpperCase().strip();
+
+        System.out.println();
+        System.out.println("Reports of " + name);
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time                Description                 Vendor             Amount");
         System.out.println(" ");
 
         for (Transaction transaction : transactions)
         {
+            String vendor = transaction.getVendor();
 
+            if (name.equalsIgnoreCase(vendor))
+            {
+                displayTransaction(transaction);
+            }
         }
 
         System.out.println("--------------------------------------------------------------------------------------------");
@@ -490,6 +513,15 @@ public class AccountingLedgerApp
     // ask user for payment amount and save it to csv file
     private void makePayment()
     {
+        System.out.println();
+        System.out.print("Enter description: ");
+        String description = scanner.nextLine().toLowerCase().strip();
+        System.out.print("Enter vendor name: ");
+        String vendor = scanner.nextLine().toUpperCase().strip();
+        System.out.print("Enter amount of payment: ");
+        float amount = scanner.nextFloat();
+        scanner.nextLine();
+
 
     }
 
