@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -247,7 +248,7 @@ public class AccountingLedgerApp
         System.out.println("Date              Time                Description                 Vendor             Amount");
         System.out.println(" ");
 
-
+        for ()
 
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println();
@@ -263,7 +264,7 @@ public class AccountingLedgerApp
         System.out.println("Date              Time                Description                 Vendor             Amount");
         System.out.println(" ");
 
-       
+
 
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println();
@@ -330,35 +331,159 @@ public class AccountingLedgerApp
     // display report MTD
     private void reportMTD()
     {
+        System.out.println();
+        System.out.println("Payments");
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println(" ");
 
+        for (Transaction transaction : transactions)
+        {
+            LocalDate currentDate = LocalDate.now();
+            int dayNow = currentDate.getDayOfMonth();
+            Month monthNow = currentDate.getMonth();
+            int yearNow = currentDate.getYear();
+            LocalDate transactionDay = transaction.getDate();
+            int day = transactionDay.getDayOfMonth();
+            Month month = transactionDay.getMonth();
+            int year = transactionDay.getYear();
+
+            if (year == yearNow)
+            {
+                 if (month == monthNow)
+                 {
+                     if (day < dayNow)
+                     {
+                         displayTransaction(transaction);
+                     }
+                 }
+            }
+        }
+
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println();
     }
 
 
     // display report previous month
     private void reportPreviousMonth()
     {
+        System.out.println();
+        System.out.println("Payments");
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println(" ");
 
+        for (Transaction transaction : transactions)
+        {
+            LocalDate currentDate = LocalDate.now();
+            LocalDate previous = currentDate.minusMonths(1);
+            int dayNow = currentDate.getDayOfMonth();
+            Month monthPrevious = previous.getMonth();
+            int yearNow = currentDate.getYear();
+            LocalDate transactionDay = transaction.getDate();
+            int day = transactionDay.getDayOfMonth();
+            Month month = transactionDay.getMonth();
+            int year = transactionDay.getYear();
+
+            if (year == yearNow)
+            {
+                if (month == monthPrevious)
+                {
+                    if (day < dayNow)
+                    {
+                        displayTransaction(transaction);
+                    }
+                }
+            }
+        }
+
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println();
     }
 
 
     // display report YTD
     private void reportYTD()
     {
+        System.out.println();
+        System.out.println("Payments");
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println(" ");
 
+        for (Transaction transaction : transactions)
+        {
+            LocalDate currentDate = LocalDate.now();
+            int dayNow = currentDate.getDayOfMonth();
+            int yearNow = currentDate.getYear();
+            LocalDate transactionDay = transaction.getDate();
+            int day = transactionDay.getDayOfMonth();
+            int year = transactionDay.getYear();
+
+            if (year == yearNow)
+            {
+                if (day < dayNow)
+                {
+                    displayTransaction(transaction);
+                }
+            }
+        }
+
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println();
     }
 
 
     // display report previous year
     private void reportPreviousYear()
     {
+        System.out.println();
+        System.out.println("Payments");
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println(" ");
 
+        for (Transaction transaction : transactions)
+        {
+            LocalDate currentDate = LocalDate.now();
+            LocalDate previous = currentDate.minusYears(1);
+            int dayNow = currentDate.getDayOfMonth();
+            int yearPrevious = previous.getYear();
+            LocalDate transactionDay = transaction.getDate();
+            int day = transactionDay.getDayOfMonth();
+            int year = transactionDay.getYear();
+
+            if (year == yearPrevious)
+            {
+                if (day < dayNow)
+                {
+                    displayTransaction(transaction);
+                }
+            }
+        }
+
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println();
     }
 
 
     // display report with vendor name
     private void reportSearchVendor()
     {
+        System.out.println();
+        System.out.println("Payments");
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println(" ");
 
+        for (Transaction transaction : transactions)
+        {
+
+        }
+
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println();
     }
 
 
