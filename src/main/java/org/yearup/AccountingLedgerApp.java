@@ -1,12 +1,10 @@
 package org.yearup;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,6 +42,11 @@ public class AccountingLedgerApp
                     System.out.println("Thank you. Good bye!");
                     break;
                 }
+                else
+                {
+                    System.out.println();
+                    System.out.println("Invalid selection");
+                }
             }
 
         }
@@ -71,7 +74,7 @@ public class AccountingLedgerApp
             {
                 String[] columm = line.split("\\|");
                 LocalDate date = LocalDate.parse(columm[0]);
-                LocalTime time = LocalTime.parse(columm[1]);
+                String time = columm[1];
                 String description = columm[2];
                 String vendor = columm[3];
                 float amount = Float.parseFloat(columm[4]);
@@ -99,7 +102,7 @@ public class AccountingLedgerApp
             }
         }
 
-        Collections.sort(inventory);
+        inventory.sort(Collections.reverseOrder());
         return inventory;
     }
 
@@ -121,7 +124,7 @@ public class AccountingLedgerApp
             {
                 String[] columm = line.split("\\|");
                 LocalDate date = LocalDate.parse(columm[0]);
-                LocalTime time = LocalTime.parse(columm[1]);
+                String time = columm[1];
                 String description = columm[2];
                 String vendor = columm[3];
                 float amount = Float.parseFloat(columm[4]);
@@ -227,7 +230,7 @@ public class AccountingLedgerApp
         System.out.println();
         System.out.println("Ledger");
         System.out.println("--------------------------------------------------------------------------------------------");
-        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println("Date              Time              Description                 Vendor            Amount");
         System.out.println(" ");
 
         for (Transaction transaction : transactions)
@@ -246,7 +249,7 @@ public class AccountingLedgerApp
         System.out.println();
         System.out.println("Deposit");
         System.out.println("--------------------------------------------------------------------------------------------");
-        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println("Date              Time              Description                 Vendor            Amount");
         System.out.println(" ");
 
         for (Transaction transaction : transactions)
@@ -269,7 +272,7 @@ public class AccountingLedgerApp
         System.out.println();
         System.out.println("Payments");
         System.out.println("--------------------------------------------------------------------------------------------");
-        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println("Date              Time              Description                 Vendor            Amount");
         System.out.println(" ");
 
         for (Transaction transaction : transactions)
@@ -349,7 +352,7 @@ public class AccountingLedgerApp
         System.out.println();
         System.out.println("Reports Month To Date");
         System.out.println("--------------------------------------------------------------------------------------------");
-        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println("Date              Time              Description                 Vendor            Amount");
         System.out.println(" ");
 
         for (Transaction transaction : transactions)
@@ -363,15 +366,10 @@ public class AccountingLedgerApp
             Month month = transactionDay.getMonth();
             int year = transactionDay.getYear();
 
-            if (year == yearNow)
+            // compare date
+            if (year == yearNow && month == monthNow && day < dayNow)
             {
-                 if (month == monthNow)
-                 {
-                     if (day < dayNow)
-                     {
-                         displayTransaction(transaction);
-                     }
-                 }
+                displayTransaction(transaction);
             }
         }
 
@@ -386,13 +384,13 @@ public class AccountingLedgerApp
         System.out.println();
         System.out.println("Reports Previous Month");
         System.out.println("--------------------------------------------------------------------------------------------");
-        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println("Date              Time              Description                 Vendor            Amount");
         System.out.println(" ");
 
         for (Transaction transaction : transactions)
         {
             LocalDate currentDate = LocalDate.now();
-            LocalDate previous = currentDate.minusMonths(1);
+            LocalDate previous = currentDate.minusMonths(1); // get previous month
             int dayNow = currentDate.getDayOfMonth();
             Month monthPrevious = previous.getMonth();
             int yearNow = currentDate.getYear();
@@ -401,15 +399,10 @@ public class AccountingLedgerApp
             Month month = transactionDay.getMonth();
             int year = transactionDay.getYear();
 
-            if (year == yearNow)
+            // compare date
+            if (year == yearNow && month == monthPrevious && day < dayNow)
             {
-                if (month == monthPrevious)
-                {
-                    if (day < dayNow)
-                    {
-                        displayTransaction(transaction);
-                    }
-                }
+                displayTransaction(transaction);
             }
         }
 
@@ -424,24 +417,28 @@ public class AccountingLedgerApp
         System.out.println();
         System.out.println("Reports Year To Date");
         System.out.println("--------------------------------------------------------------------------------------------");
-        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println("Date              Time              Description                 Vendor            Amount");
         System.out.println(" ");
 
         for (Transaction transaction : transactions)
         {
             LocalDate currentDate = LocalDate.now();
             int dayNow = currentDate.getDayOfMonth();
+            Month monthNow = currentDate.getMonth();
             int yearNow = currentDate.getYear();
             LocalDate transactionDay = transaction.getDate();
             int day = transactionDay.getDayOfMonth();
+            Month month = transactionDay.getMonth();
             int year = transactionDay.getYear();
 
-            if (year == yearNow)
+            // compare date
+            if (year == yearNow && month != monthNow)
             {
-                if (day < dayNow)
-                {
-                    displayTransaction(transaction);
-                }
+                displayTransaction(transaction);
+            }
+            else if (year == yearNow && day < dayNow)
+            {
+                displayTransaction(transaction);
             }
         }
 
@@ -456,25 +453,29 @@ public class AccountingLedgerApp
         System.out.println();
         System.out.println("Reports Previous Year");
         System.out.println("--------------------------------------------------------------------------------------------");
-        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println("Date              Time              Description                 Vendor            Amount");
         System.out.println(" ");
 
         for (Transaction transaction : transactions)
         {
             LocalDate currentDate = LocalDate.now();
-            LocalDate previous = currentDate.minusYears(1);
+            LocalDate previous = currentDate.minusYears(1); // get previous year
             int dayNow = currentDate.getDayOfMonth();
+            Month monthNow = currentDate.getMonth();
             int yearPrevious = previous.getYear();
             LocalDate transactionDay = transaction.getDate();
             int day = transactionDay.getDayOfMonth();
+            Month month = transactionDay.getMonth();
             int year = transactionDay.getYear();
 
-            if (year == yearPrevious)
+            // compare date
+            if (year == yearPrevious && month != monthNow)
             {
-                if (day < dayNow)
-                {
-                    displayTransaction(transaction);
-                }
+                displayTransaction(transaction);
+            }
+            else if (year == yearPrevious && day < dayNow)
+            {
+                displayTransaction(transaction);
             }
         }
 
@@ -493,7 +494,7 @@ public class AccountingLedgerApp
         System.out.println();
         System.out.println("Reports of " + name);
         System.out.println("--------------------------------------------------------------------------------------------");
-        System.out.println("Date              Time                Description                 Vendor             Amount");
+        System.out.println("Date              Time              Description                 Vendor            Amount");
         System.out.println(" ");
 
         for (Transaction transaction : transactions)
@@ -523,17 +524,21 @@ public class AccountingLedgerApp
         float amount = scanner.nextFloat();
         scanner.nextLine();
 
-        FileWriter fileWriter = null;
+        FileWriter fileWriter;
+        BufferedWriter writer = null;
         LocalDate date = LocalDate.now();
-        LocalTime time = LocalTime.now();
+        LocalTime localTime = LocalTime.now();
+        DateTimeFormatter time = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String currentTime = localTime.format(time);
 
         try
         {
             fileWriter = new FileWriter("transactions.csv", true);
-            Transaction transaction = new Transaction(date, time, description, vendor, amount);
+            writer = new BufferedWriter(fileWriter);
+            Transaction transaction = new Transaction(date, currentTime, description, vendor, amount);
 
-            fileWriter.write(transaction.setDate(date) + "|" + transaction.setTime(time) + "|" + transaction.setDescription(description) + "|" + transaction.setVendor(vendor) + "|-" + transaction.setAmount(amount) + "\n");
-            fileWriter.flush();
+            writer.write(transaction.setDate(date) + "|" + transaction.setTime(currentTime) + "|" + transaction.setDescription(description) + "|" + transaction.setVendor(vendor) + "|-" + transaction.setAmount(amount) + "\n");
+            writer.flush();
         }
         catch (IOException e)
         {
@@ -541,11 +546,11 @@ public class AccountingLedgerApp
         }
         finally
         {
-            if (fileWriter != null)
+            if (writer != null)
             {
                 try
                 {
-                    fileWriter.close();
+                    writer.close();
                 }
                 catch (Exception e)
                 {
@@ -570,14 +575,16 @@ public class AccountingLedgerApp
 
         FileWriter fileWriter = null;
         LocalDate date = LocalDate.now();
-        LocalTime time = LocalTime.now();
+        LocalTime localTime = LocalTime.now();
+        DateTimeFormatter time = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String currentTime = localTime.format(time);
 
         try
         {
             fileWriter = new FileWriter("transactions.csv", true);
-            Transaction transaction = new Transaction(date, time, description, vendor, amount);
+            Transaction transaction = new Transaction(date, currentTime, description, vendor, amount);
 
-            fileWriter.write(transaction.setDate(date) + "|" + transaction.setTime(time) + "|" + transaction.setDescription(description) + "|" + transaction.setVendor(vendor) + "|" + transaction.setAmount(amount) + "\n");
+            fileWriter.write(transaction.setDate(date) + "|" + transaction.setTime(currentTime) + "|" + transaction.setDescription(description) + "|" + transaction.setVendor(vendor) + "|" + transaction.setAmount(amount) + "\n");
             fileWriter.flush();
         }
         catch (IOException e)
@@ -604,6 +611,6 @@ public class AccountingLedgerApp
     // display transaction format
     private void displayTransaction(Transaction transaction)
     {
-        System.out.printf("%-15s %-15s %-35s %-25s %.2f \n", transaction.getDate(), transaction.getTime(), transaction.getDescription(), transaction.getVendor(), transaction.getAmount());
+        System.out.printf("%-15s %-17s %-28s %-17s $ %.2f \n", transaction.getDate(), transaction.getTime(), transaction.getDescription(), transaction.getVendor(), transaction.getAmount());
     }
 }

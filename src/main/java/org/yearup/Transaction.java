@@ -1,7 +1,6 @@
 package org.yearup;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 public class Transaction implements Comparable<Transaction>
 {
@@ -18,13 +17,13 @@ public class Transaction implements Comparable<Transaction>
 
 
     private LocalDate date;
-    private LocalTime time;
+    private String time;
     private String description;
     private String vendor;
     private float amount;
 
 
-    public Transaction(LocalDate date, LocalTime time, String description, String vendor, float amount)
+    public Transaction(LocalDate date, String time, String description, String vendor, float amount)
     {
         this.date = date;
         this.time = time;
@@ -43,11 +42,11 @@ public class Transaction implements Comparable<Transaction>
         return date;
     }
 
-    public LocalTime getTime() {
+    public String getTime() {
         return time;
     }
 
-    public LocalTime setTime(LocalTime time) {
+    public String setTime(String time) {
         this.time = time;
         return time;
     }
