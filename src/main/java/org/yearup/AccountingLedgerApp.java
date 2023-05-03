@@ -42,7 +42,7 @@ public class AccountingLedgerApp
                 else
                 {
                     System.out.println();
-                    System.out.println("Invalid selection");
+                    System.out.println(ColorCodes.RED + "Invalid selection" + ColorCodes.RESET);
                 }
             }
 
@@ -161,7 +161,7 @@ public class AccountingLedgerApp
             else
             {
                 System.out.println();
-                System.out.println("Invalid selection");
+                System.out.println(ColorCodes.RED + "Invalid selection" + ColorCodes.RESET);
                 displayLedgerScreen();
             }
         }
@@ -458,15 +458,35 @@ public class AccountingLedgerApp
     // ask user for payment amount and save it to csv file
     private void makePayment()
     {
-        System.out.println();
-        System.out.print("Enter amount of payment: ");
-        float amount = scanner.nextFloat();
-        scanner.nextLine();
-        System.out.print("Enter description: ");
-        String description = scanner.nextLine().toLowerCase().strip();
-        System.out.print("Enter vendor name: ");
-        String vendor = scanner.nextLine().toUpperCase().strip();
+        String description;
+        String amountInput;
+        String vendor;
 
+        System.out.println();
+
+        do
+        {
+            System.out.print("Enter amount of payment: ");
+            amountInput = scanner.nextLine();
+            System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
+        }while (amountInput == null || amountInput.isEmpty());
+
+        do
+        {
+            System.out.print("Enter description: ");
+            description = scanner.nextLine().toLowerCase().strip();
+            System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
+        }while (description == null || description.isEmpty());
+
+        do
+        {
+            System.out.print("Enter vendor name: ");
+            vendor = scanner.nextLine().toUpperCase().strip();
+            System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
+        }while (vendor == null || vendor.isEmpty());
+
+
+        float amount = Float.parseFloat(amountInput);
 
         FileWriter fileWriter;
         BufferedWriter writer = null;
@@ -507,21 +527,42 @@ public class AccountingLedgerApp
         }
 
         transactions.sort(Collections.reverseOrder());
-        System.out.println("\nPayment Completed");
+        System.out.println(ColorCodes.GREEN + "\nPayment Completed" + ColorCodes.RESET);
     }
 
 
     // ask user for deposit amount and save it to csv file
     private void addDeposit()
     {
+        String description;
+        String amountInput;
+        String vendor;
+
         System.out.println();
-        System.out.print("Enter amount of deposit: ");
-        float amount = scanner.nextFloat();
-        scanner.nextLine();
-        System.out.print("Enter description: ");
-        String description = scanner.nextLine().toLowerCase().strip();
-        System.out.print("Enter vendor name: ");
-        String vendor = scanner.nextLine().toUpperCase().strip();
+
+        do
+        {
+            System.out.print("Enter amount of deposit: ");
+            amountInput = scanner.nextLine();
+            System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
+        }while (amountInput == null || amountInput.isEmpty());
+
+        do
+        {
+            System.out.print("Enter description: ");
+            description = scanner.nextLine().toLowerCase().strip();
+            System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
+        }while (description == null || description.isEmpty());
+
+        do
+        {
+            System.out.print("Enter vendor name: ");
+            vendor = scanner.nextLine().toUpperCase().strip();
+            System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
+        }while (vendor == null || vendor.isEmpty());
+
+
+        float amount = Float.parseFloat(amountInput);
 
         FileWriter fileWriter = null;
         LocalDate date = LocalDate.now();
@@ -559,7 +600,7 @@ public class AccountingLedgerApp
         }
 
         transactions.sort(Collections.reverseOrder());
-        System.out.println("\nDeposit Completed");
+        System.out.println(ColorCodes.GREEN + "\nDeposit Completed" + ColorCodes.RESET);
     }
 
 
