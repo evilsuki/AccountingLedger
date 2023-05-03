@@ -459,13 +459,14 @@ public class AccountingLedgerApp
     private void makePayment()
     {
         System.out.println();
+        System.out.print("Enter amount of payment: ");
+        float amount = scanner.nextFloat();
+        scanner.nextLine();
         System.out.print("Enter description: ");
         String description = scanner.nextLine().toLowerCase().strip();
         System.out.print("Enter vendor name: ");
         String vendor = scanner.nextLine().toUpperCase().strip();
-        System.out.print("Enter amount of payment: ");
-        float amount = scanner.nextFloat();
-        scanner.nextLine();
+
 
         FileWriter fileWriter;
         BufferedWriter writer = null;
@@ -514,13 +515,13 @@ public class AccountingLedgerApp
     private void addDeposit()
     {
         System.out.println();
+        System.out.print("Enter amount of deposit: ");
+        float amount = scanner.nextFloat();
+        scanner.nextLine();
         System.out.print("Enter description: ");
         String description = scanner.nextLine().toLowerCase().strip();
         System.out.print("Enter vendor name: ");
         String vendor = scanner.nextLine().toUpperCase().strip();
-        System.out.print("Enter amount of deposit: ");
-        float amount = scanner.nextFloat();
-        scanner.nextLine();
 
         FileWriter fileWriter = null;
         LocalDate date = LocalDate.now();
@@ -572,22 +573,32 @@ public class AccountingLedgerApp
         System.out.println("Custom Search");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Enter the value for field search or Enter blank to skip");
+
         System.out.print("\t Start Date (dd/mm/yyyy): ");
         String startDateInput = scanner.nextLine().strip();
-//        LocalDate startDate = LocalDate.parse(startDateInput, formatter);
+        boolean hasStartDate = !startDateInput.equalsIgnoreCase("");
+        LocalDate startDate = null;
+        if(hasStartDate) startDate = LocalDate.parse(startDateInput, formatter);
 
         System.out.print("\t End Date (dd/mm/yyyy): ");
         String endDateInput = scanner.nextLine().strip();
-//        LocalDate endDate = LocalDate.parse(endDateInput, formatter);
+        boolean hasEndDate = !endDateInput.equalsIgnoreCase("");
+        LocalDate endDate = null;
+        if(hasEndDate) endDate = LocalDate.parse(endDateInput, formatter);
 
         System.out.print("\t Description: ");
         String description = scanner.nextLine().strip();
+        boolean hasDescription = !description.equals("");
 
         System.out.print("\t Vendor: ");
         String vendor = scanner.nextLine().strip();
+        boolean hasVendor = !vendor.equals("");
 
         System.out.print("\t Amount: ");
         String amountInput = scanner.nextLine();
+        boolean hasAmount = !amountInput.equals("");
+        Float amount = null;
+        if(hasAmount) amount = Float.parseFloat(amountInput);
 
         System.out.println();
         System.out.println("Reports");
@@ -602,145 +613,30 @@ public class AccountingLedgerApp
             String transVendor = transaction.getVendor();
             float transAmount = transaction.getAmount();
 
-            boolean compare2 = transDescription.equalsIgnoreCase(description) && transVendor.equalsIgnoreCase(vendor) && amountInput == null;
-
-            assert amountInput != null;
-//            float amount = Float.parseFloat(amountInput);
-            boolean compare1 = transDescription.equalsIgnoreCase(description) && transVendor.equalsIgnoreCase(vendor) && transAmount == Float.parseFloat(amountInput);
-            boolean compare3 = transVendor.equalsIgnoreCase(vendor) && transAmount == Float.parseFloat(amountInput) && description == null;
-            boolean compare4 = transDescription.equalsIgnoreCase(description) && transAmount == Float.parseFloat(amountInput) && vendor == null;
-            boolean compare5 = transDescription.equalsIgnoreCase(description) || transVendor.equalsIgnoreCase(vendor) || transAmount == Float.parseFloat(amountInput);
-
-
-            if (startDateInput != null && endDateInput != null)
+            if(hasStartDate)
             {
-                LocalDate startDate = LocalDate.parse(startDateInput, formatter);
-                LocalDate endDate = LocalDate.parse(endDateInput, formatter);
-
-                if (transactionDate.isBefore(endDate) && transactionDate.isAfter(startDate) || transactionDate.isEqual(startDate) || transactionDate.isEqual(endDate))
-                {
-                    if (compare1 || compare5)
-                    {
-                        displayTransaction(transaction);
-                    }
-                    else if (compare2 || compare3 || compare4)
-                    {
-                        displayTransaction(transaction);
-                    }
-                    else
-                    {
-//                    else if (compare2)
-//                    {
-//                        displayTransaction(transaction);
-//                    }
-//                    else if (compare3)
-//                    {
-//                        displayTransaction(transaction);
-//                    }
-//                    else if (compare4)
-//                    {
-//                        displayTransaction(transaction);
-//                    }
-//                    else if (compare5)
-//                    {
-//                        displayTransaction(transaction);
-//                    }
-
-                        displayTransaction(transaction);
-                    }
-                }
+                //if it is outside the range - skip to the next transaction
+                if (transactionDate.isBefore(startDate)) continue;
             }
-            else if (startDateInput != null)
+            if (hasEndDate)
             {
-                LocalDate startDate = LocalDate.parse(startDateInput, formatter);
-
-                if (transactionDate.isAfter(startDate) || transactionDate.isEqual(startDate))
-                {
-                    if (compare1)
-                    {
-                        displayTransaction(transaction);
-                    }
-                    else if (compare2)
-                    {
-                        displayTransaction(transaction);
-                    }
-                    else if (compare3)
-                    {
-                        displayTransaction(transaction);
-                    }
-                    else if (compare4)
-                    {
-                        displayTransaction(transaction);
-                    }
-                    else if (compare5)
-                    {
-                        displayTransaction(transaction);
-                    }
-                    else {
-
-                        displayTransaction(transaction);
-                    }
-                }
+                if (transactionDate.isAfter(endDate)) continue;
             }
-            else if (endDateInput != null)
+            if (hasDescription)
             {
-                LocalDate endDate = LocalDate.parse(endDateInput, formatter);
-
-                if (transactionDate.isBefore(endDate) || transactionDate.isEqual(endDate))
-                {
-                    if (compare1)
-                    {
-                        displayTransaction(transaction);
-                    }
-                    else if (compare2)
-                    {
-                        displayTransaction(transaction);
-                    }
-                    else if (compare3)
-                    {
-                        displayTransaction(transaction);
-                    }
-                    else if (compare4)
-                    {
-                        displayTransaction(transaction);
-                    }
-                    else if (compare5)
-                    {
-                        displayTransaction(transaction);
-                    }
-
-                    else {
-                        displayTransaction(transaction);
-                    }
-                }
+                // check if it not equal - skip next transaction
+                if (!transDescription.equalsIgnoreCase(description)) continue;
             }
-            else
+            if (hasVendor)
             {
-                if (compare1)
-                {
-                    displayTransaction(transaction);
-                }
-                else if (compare2)
-                {
-                    displayTransaction(transaction);
-                }
-                else if (compare3)
-                {
-                    displayTransaction(transaction);
-                }
-                else if (compare4)
-                {
-                    displayTransaction(transaction);
-                }
-                else if (compare5)
-                {
-                    displayTransaction(transaction);
-                }
-                else
-                {
-                    System.out.println("No reports was found");
-                }
+                if (!transVendor.equalsIgnoreCase(vendor)) continue;
             }
+            if (hasAmount)
+            {
+                if (transAmount != amount)continue;
+            }
+
+            displayTransaction(transaction);
         }
 
         System.out.println("--------------------------------------------------------------------------------------------");
