@@ -5,16 +5,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class AccountingLedgerApp
 {
     Scanner scanner = new Scanner(System.in);
     ArrayList<Transaction> transactions = loadTransaction();
-    HashMap<String, Transaction> transactionMap = hashMap();
 
     public void run()
     {
@@ -104,55 +100,6 @@ public class AccountingLedgerApp
 
         inventory.sort(Collections.reverseOrder());
         return inventory;
-    }
-
-
-    // create hashmap for user search key
-    private HashMap<String, Transaction> hashMap()
-    {
-        FileReader fileReader;
-        BufferedReader reader = null;
-        HashMap<String, Transaction> hashMap = new HashMap<>();
-
-        try
-        {
-            fileReader = new FileReader("transactions.csv");
-            reader = new BufferedReader(fileReader);
-            String line;
-
-            while ((line = reader.readLine()) != null)
-            {
-                String[] columm = line.split("\\|");
-                LocalDate date = LocalDate.parse(columm[0]);
-                String time = columm[1];
-                String description = columm[2];
-                String vendor = columm[3];
-                float amount = Float.parseFloat(columm[4]);
-
-                Transaction transaction = new Transaction(date, time, description, vendor, amount);
-                hashMap.put(vendor, transaction);
-            }
-        }
-        catch (IOException e)
-        {
-            System.out.println(e.getMessage());
-        }
-        finally
-        {
-            if (reader != null)
-            {
-                try
-                {
-                    reader.close();
-                }
-                catch (Exception e)
-                {
-                    System.out.println(e.getMessage());
-                }
-            }
-        }
-
-        return hashMap;
     }
 
 
@@ -303,6 +250,7 @@ public class AccountingLedgerApp
             System.out.println("\t 3) Year To Date");
             System.out.println("\t 4) Previous Year");
             System.out.println("\t 5) Search by Vendor");
+            System.out.println("\t 6) Custom Search");
             System.out.println("\t 0) Back");
             System.out.print("Enter your selection: ");
             int selection = scanner.nextInt();
@@ -327,6 +275,10 @@ public class AccountingLedgerApp
             else if (selection == 5)
             {
                 reportSearchVendor();
+            }
+            else if (selection == 6)
+            {
+                customSearch();
             }
             else if (selection == 0)
             {
@@ -367,7 +319,7 @@ public class AccountingLedgerApp
             int year = transactionDay.getYear();
 
             // compare date
-            if (year == yearNow && month == monthNow && day < dayNow)
+            if (year == yearNow && month == monthNow && day <= dayNow)
             {
                 displayTransaction(transaction);
             }
@@ -391,16 +343,14 @@ public class AccountingLedgerApp
         {
             LocalDate currentDate = LocalDate.now();
             LocalDate previous = currentDate.minusMonths(1); // get previous month
-            int dayNow = currentDate.getDayOfMonth();
             Month monthPrevious = previous.getMonth();
             int yearNow = currentDate.getYear();
             LocalDate transactionDay = transaction.getDate();
-            int day = transactionDay.getDayOfMonth();
             Month month = transactionDay.getMonth();
             int year = transactionDay.getYear();
 
             // compare date
-            if (year == yearNow && month == monthPrevious && day < dayNow)
+            if (year == yearNow && month == monthPrevious)
             {
                 displayTransaction(transaction);
             }
@@ -436,7 +386,7 @@ public class AccountingLedgerApp
             {
                 displayTransaction(transaction);
             }
-            else if (year == yearNow && day < dayNow)
+            else if (year == yearNow && day <= dayNow)
             {
                 displayTransaction(transaction);
             }
@@ -473,7 +423,7 @@ public class AccountingLedgerApp
             {
                 displayTransaction(transaction);
             }
-            else if (year == yearPrevious && day < dayNow)
+            else if (year == yearPrevious && day <= dayNow)
             {
                 displayTransaction(transaction);
             }
@@ -530,15 +480,18 @@ public class AccountingLedgerApp
         LocalTime localTime = LocalTime.now();
         DateTimeFormatter time = DateTimeFormatter.ofPattern("HH:mm:ss");
         String currentTime = localTime.format(time);
+        float paymentAmount = -amount;
 
         try
         {
             fileWriter = new FileWriter("transactions.csv", true);
             writer = new BufferedWriter(fileWriter);
-            Transaction transaction = new Transaction(date, currentTime, description, vendor, amount);
+            Transaction transaction = new Transaction(date, currentTime, description, vendor, paymentAmount);
 
-            writer.write(transaction.setDate(date) + "|" + transaction.setTime(currentTime) + "|" + transaction.setDescription(description) + "|" + transaction.setVendor(vendor) + "|-" + transaction.setAmount(amount) + "\n");
+            writer.write(transaction.setDate(date) + "|" + transaction.setTime(currentTime) + "|" + transaction.setDescription(description) + "|" + transaction.setVendor(vendor) + "|" + transaction.setAmount(paymentAmount) + "\n");
             writer.flush();
+
+            transactions.add(transaction);
         }
         catch (IOException e)
         {
@@ -558,6 +511,9 @@ public class AccountingLedgerApp
                 }
             }
         }
+
+        transactions.sort(Collections.reverseOrder());
+        System.out.println("\nPayment Completed");
     }
 
 
@@ -586,6 +542,8 @@ public class AccountingLedgerApp
 
             fileWriter.write(transaction.setDate(date) + "|" + transaction.setTime(currentTime) + "|" + transaction.setDescription(description) + "|" + transaction.setVendor(vendor) + "|" + transaction.setAmount(amount) + "\n");
             fileWriter.flush();
+
+            transactions.add(transaction);
         }
         catch (IOException e)
         {
@@ -605,6 +563,287 @@ public class AccountingLedgerApp
                 }
             }
         }
+
+        transactions.sort(Collections.reverseOrder());
+        System.out.println("\nDeposit Completed");
+    }
+
+
+    // challenge: Prompt the user for
+    //search values for all ledger entry properties
+    private void customSearch()
+    {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
+
+        System.out.println();
+        System.out.println("Custom Search");
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println("Enter the value for field search or Enter blank to skip");
+        System.out.print("\t Start Date (mm/dd/yyyy): ");
+        String startDateInput = scanner.nextLine().strip();
+        LocalDate startDate = LocalDate.parse(startDateInput, formatter);
+
+        System.out.print("\t End Date (mm/dd/yyyy): ");
+        String endDateInput = scanner.nextLine().strip();
+        LocalDate endDate = LocalDate.parse(endDateInput, formatter);
+
+        System.out.print("\t Description: ");
+        String description = scanner.nextLine().toLowerCase().strip();
+
+        System.out.print("\t Vendor: ");
+        String vendor = scanner.nextLine().toUpperCase().strip();
+
+        System.out.print("\t Amount: ");
+        String inputAmount = scanner.nextLine().strip();
+
+        for (Transaction transaction : transactions)
+        {
+            LocalDate transactionDate = transaction.getDate();
+            String transDescription = transaction.getDescription();
+            String transVendor = transaction.getVendor();
+            float transAmount = transaction.getAmount();
+
+            boolean compare1 = transDescription.equalsIgnoreCase(description) && transVendor.equalsIgnoreCase(vendor);
+            boolean compare2 = transDescription.equalsIgnoreCase(description);
+            boolean compare3 = transVendor.equalsIgnoreCase(vendor);
+
+            if (startDate != null && endDate != null)
+            {
+                if (transactionDate.isBefore(endDate) && transactionDate.isAfter(startDate) || transactionDate.isEqual(endDate) || transactionDate.isEqual(startDate))
+                {
+                    if (description != null && vendor != null && inputAmount != null)
+                    {
+                        if (compare1 && transAmount == Float.parseFloat(inputAmount))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (description != null && vendor != null)
+                    {
+                        if (compare1)
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (description != null && inputAmount != null)
+                    {
+                        if (compare2 && transAmount == Float.parseFloat(inputAmount))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (vendor != null && inputAmount != null)
+                    {
+                        if (compare3 && transAmount == Float.parseFloat(inputAmount))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (vendor != null)
+                    {
+                        if (transVendor.equalsIgnoreCase(vendor))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (description != null)
+                    {
+                        if (transDescription.equalsIgnoreCase(description))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (inputAmount != null)
+                    {
+                        if (transAmount == Float.parseFloat(inputAmount))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else
+                    {
+                        displayTransaction(transaction);
+                    }
+                }
+            }
+            else if (startDate != null)
+            {
+                if (transactionDate.isAfter(startDate) || transactionDate.isEqual(startDate))
+                {
+                    if (description != null && vendor != null && inputAmount != null)
+                    {
+                        if (compare1 && transAmount == Float.parseFloat(inputAmount))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (description != null && vendor != null)
+                    {
+                        if (compare1)
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (description != null && inputAmount != null)
+                    {
+                        if (compare2 && transAmount == Float.parseFloat(inputAmount))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (vendor != null && inputAmount != null)
+                    {
+                        if (compare3 && transAmount == Float.parseFloat(inputAmount))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (vendor != null)
+                    {
+                        if (transVendor.equalsIgnoreCase(vendor))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (description != null)
+                    {
+                        if (transDescription.equalsIgnoreCase(description))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (inputAmount != null)
+                    {
+                        if (transAmount == Float.parseFloat(inputAmount))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else
+                    {
+                        displayTransaction(transaction);
+                    }
+                }
+            }
+            else if (endDate != null)
+            {
+                if (transactionDate.isBefore(endDate) || transactionDate.isEqual(endDate))
+                {
+                    if (description != null && vendor != null && inputAmount != null)
+                    {
+                        if (compare1 && transAmount == Float.parseFloat(inputAmount))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (description != null && vendor != null)
+                    {
+                        if (compare1)
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (description != null && inputAmount != null)
+                    {
+                        if (compare2 && transAmount == Float.parseFloat(inputAmount))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (vendor != null && inputAmount != null)
+                    {
+                        if (compare3 && transAmount == Float.parseFloat(inputAmount))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (vendor != null)
+                    {
+                        if (transVendor.equalsIgnoreCase(vendor))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (description != null)
+                    {
+                        if (transDescription.equalsIgnoreCase(description))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else if (inputAmount != null)
+                    {
+                        if (transAmount == Float.parseFloat(inputAmount))
+                        {
+                            displayTransaction(transaction);
+                        }
+                    }
+                    else
+                    {
+                        displayTransaction(transaction);
+                    }
+                }
+            }
+            else
+            {
+                if (description != null && vendor != null && inputAmount != null)
+                {
+                    if (compare1 && transAmount == Float.parseFloat(inputAmount))
+                    {
+                        displayTransaction(transaction);
+                    }
+                }
+                else if (description != null && vendor != null)
+                {
+                    if (compare1)
+                    {
+                        displayTransaction(transaction);
+                    }
+                }
+                else if (description != null && inputAmount != null)
+                {
+                    if (compare2 && transAmount == Float.parseFloat(inputAmount))
+                    {
+                        displayTransaction(transaction);
+                    }
+                }
+                else if (vendor != null && inputAmount != null)
+                {
+                    if (compare3 && transAmount == Float.parseFloat(inputAmount))
+                    {
+                        displayTransaction(transaction);
+                    }
+                }
+                else if (vendor != null)
+                {
+                    if (transVendor.equalsIgnoreCase(vendor))
+                    {
+                        displayTransaction(transaction);
+                    }
+                }
+                else if (description != null)
+                {
+                    if (transDescription.equalsIgnoreCase(description))
+                    {
+                        displayTransaction(transaction);
+                    }
+                }
+                else if (inputAmount != null)
+                {
+                    if (transAmount == Float.parseFloat(inputAmount))
+                    {
+                        displayTransaction(transaction);
+                    }
+                }
+                else
+                {
+                    System.out.println("No fields to search");
+                }
+            }
+        }
+
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println();
     }
 
 
