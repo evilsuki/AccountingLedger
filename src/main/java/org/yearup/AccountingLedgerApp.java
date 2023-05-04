@@ -72,8 +72,8 @@ public class AccountingLedgerApp
                 String[] columm = line.split("\\|");
                 LocalDate date = LocalDate.parse(columm[0]);
                 String time = columm[1];
-                String description = columm[2];
-                String vendor = columm[3];
+                String description = columm[2].toUpperCase();
+                String vendor = columm[3].toUpperCase();
                 float amount = Float.parseFloat(columm[4]);
 
                 Transaction transaction = new Transaction(date, time, description, vendor, amount);
@@ -179,7 +179,7 @@ public class AccountingLedgerApp
         System.out.println("Ledger");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time              Description                 Vendor            Amount");
-        System.out.println(" ");
+        System.out.println("--------------------------------------------------------------------------------------------");
 
         for (Transaction transaction : transactions)
         {
@@ -198,7 +198,7 @@ public class AccountingLedgerApp
         System.out.println("Deposit");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time              Description                 Vendor            Amount");
-        System.out.println(" ");
+        System.out.println("--------------------------------------------------------------------------------------------");
 
         for (Transaction transaction : transactions)
         {
@@ -221,7 +221,7 @@ public class AccountingLedgerApp
         System.out.println("Payments");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time              Description                 Vendor            Amount");
-        System.out.println(" ");
+        System.out.println("--------------------------------------------------------------------------------------------");
 
         for (Transaction transaction : transactions)
         {
@@ -288,7 +288,7 @@ public class AccountingLedgerApp
             else
             {
                 System.out.println();
-                System.out.println("Invalid selection");
+                System.out.println(ColorCodes.RED + "Invalid selection" + ColorCodes.RESET);
                 displayReportScreen();
             }
         }
@@ -306,7 +306,7 @@ public class AccountingLedgerApp
         System.out.println("Reports Month To Date");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time              Description                 Vendor            Amount");
-        System.out.println(" ");
+        System.out.println("--------------------------------------------------------------------------------------------");
 
         for (Transaction transaction : transactions)
         {
@@ -338,7 +338,7 @@ public class AccountingLedgerApp
         System.out.println("Reports Previous Month");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time              Description                 Vendor            Amount");
-        System.out.println(" ");
+        System.out.println("--------------------------------------------------------------------------------------------");
 
         for (Transaction transaction : transactions)
         {
@@ -369,7 +369,7 @@ public class AccountingLedgerApp
         System.out.println("Reports Year To Date");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time              Description                 Vendor            Amount");
-        System.out.println(" ");
+        System.out.println("--------------------------------------------------------------------------------------------");
 
         for (Transaction transaction : transactions)
         {
@@ -405,7 +405,7 @@ public class AccountingLedgerApp
         System.out.println("Reports Previous Year");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time              Description                 Vendor            Amount");
-        System.out.println(" ");
+        System.out.println("--------------------------------------------------------------------------------------------");
 
         for (Transaction transaction : transactions)
         {
@@ -438,7 +438,7 @@ public class AccountingLedgerApp
         System.out.println("Reports of " + name);
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time              Description                 Vendor            Amount");
-        System.out.println(" ");
+        System.out.println("--------------------------------------------------------------------------------------------");
 
         for (Transaction transaction : transactions)
         {
@@ -464,26 +464,45 @@ public class AccountingLedgerApp
 
         System.out.println();
 
-        do
+        while (true)
         {
             System.out.print("Enter amount of payment: ");
             amountInput = scanner.nextLine();
-            System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
-        }while (amountInput == null || amountInput.isEmpty());
-
-        do
+            if (amountInput.isEmpty())
+            {
+                System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
+            }
+            else
+            {
+                break;
+            }
+        }
+        while (true)
         {
             System.out.print("Enter description: ");
             description = scanner.nextLine().toLowerCase().strip();
-            System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
-        }while (description == null || description.isEmpty());
+            if (description.isEmpty())
+            {
+                System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
+            }
+            else
+            {
+                break;
+            }
+        }
 
-        do
+        while (true)
         {
             System.out.print("Enter vendor name: ");
             vendor = scanner.nextLine().toUpperCase().strip();
-            System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
-        }while (vendor == null || vendor.isEmpty());
+            if (vendor.isEmpty())
+            {
+                System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
+            } else
+            {
+                break;
+            }
+        }
 
 
         float amount = Float.parseFloat(amountInput);
@@ -540,27 +559,45 @@ public class AccountingLedgerApp
 
         System.out.println();
 
-        do
+        while (true)
         {
             System.out.print("Enter amount of deposit: ");
             amountInput = scanner.nextLine();
-            System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
-        }while (amountInput == null || amountInput.isEmpty());
-
-        do
+            if (amountInput.isEmpty())
+            {
+                System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
+            }
+            else
+            {
+                break;
+            }
+        }
+        while (true)
         {
             System.out.print("Enter description: ");
             description = scanner.nextLine().toLowerCase().strip();
-            System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
-        }while (description == null || description.isEmpty());
+            if (description.isEmpty())
+            {
+                System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
+            }
+            else
+            {
+                break;
+            }
+        }
 
-        do
+        while (true)
         {
             System.out.print("Enter vendor name: ");
             vendor = scanner.nextLine().toUpperCase().strip();
-            System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
-        }while (vendor == null || vendor.isEmpty());
-
+            if (vendor.isEmpty())
+            {
+                System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
+            } else
+            {
+                break;
+            }
+        }
 
         float amount = Float.parseFloat(amountInput);
 
@@ -645,7 +682,7 @@ public class AccountingLedgerApp
         System.out.println("Reports");
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println("Date              Time              Description                 Vendor            Amount");
-        System.out.println(" ");
+        System.out.println("--------------------------------------------------------------------------------------------");
 
         for (Transaction transaction : transactions)
         {
