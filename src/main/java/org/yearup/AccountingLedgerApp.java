@@ -69,12 +69,12 @@ public class AccountingLedgerApp
 
             while ((line = reader.readLine()) != null)
             {
-                String[] columm = line.split("\\|");
-                LocalDate date = LocalDate.parse(columm[0]);
-                String time = columm[1];
-                String description = columm[2].toUpperCase();
-                String vendor = columm[3].toUpperCase();
-                float amount = Float.parseFloat(columm[4]);
+                String[] variable = line.split("\\|");
+                LocalDate date = LocalDate.parse(variable[0]);
+                String time = variable[1];
+                String description = variable[2].toUpperCase();
+                String vendor = variable[3].toUpperCase();
+                float amount = Float.parseFloat(variable[4]);
 
                 Transaction transaction = new Transaction(date, time, description, vendor, amount);
                 inventory.add(transaction);
@@ -480,7 +480,7 @@ public class AccountingLedgerApp
         while (true)
         {
             System.out.print("Enter description: ");
-            description = scanner.nextLine().toLowerCase().strip();
+            description = scanner.nextLine().toUpperCase().strip();
             if (description.isEmpty())
             {
                 System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
@@ -575,7 +575,7 @@ public class AccountingLedgerApp
         while (true)
         {
             System.out.print("Enter description: ");
-            description = scanner.nextLine().toLowerCase().strip();
+            description = scanner.nextLine().toUpperCase().strip();
             if (description.isEmpty())
             {
                 System.out.println(ColorCodes.YELLOW + "Warning: Please do not leave blank" + ColorCodes.RESET);
@@ -646,6 +646,7 @@ public class AccountingLedgerApp
     private void customSearch()
     {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern("dd/MM/yyyy").toFormatter();
+        HashMap<String, Transaction> reasultMap = new HashMap<>();
 
         System.out.println();
         System.out.println("Custom Search");
@@ -715,6 +716,17 @@ public class AccountingLedgerApp
             }
 
             displayTransaction(transaction);
+            reasultMap.put(vendor,transaction);
+        }
+
+        if (reasultMap.isEmpty())
+        {
+            System.out.println();
+            System.out.println(ColorCodes.YELLOW + "No Results Found\n" + ColorCodes.RESET);
+        }
+        else
+        {
+            reasultMap.clear();
         }
 
         System.out.println("--------------------------------------------------------------------------------------------");
